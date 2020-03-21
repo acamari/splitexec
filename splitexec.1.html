@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<!-- This is an automatically generated file.  Do not edit.
+  	$OpenBSD: mdoc.template,v 1.15 2014/03/31 00:09:54 dlg Exp $
+  
+   Copyright (c) 2020 Abel Camarillo <acamari@verlet.org>
+   Copyright (c) 1990, 1991, 1993, 1994
+  	The Regents of the University of California.  All rights reserved.
+  
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+   3. Neither the name of the University nor the names of its contributors
+      may be used to endorse or promote products derived from this software
+      without specific prior written permission.
+  
+   THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+   OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+   SUCH DAMAGE.
+ -->
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="http://man.openbsd.org/mandoc.css" type="text/css" media="all"/>
+  <title>SPLITEXEC(1)</title>
+</head>
+<body>
+<table class="head">
+  <tr>
+    <td class="head-ltitle">SPLITEXEC(1)</td>
+    <td class="head-vol">General Commands Manual</td>
+    <td class="head-rtitle">SPLITEXEC(1)</td>
+  </tr>
+</table>
+<div class="manual-text">
+<section class="Sh">
+<h1 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h1>
+<p class="Pp"><code class="Nm">splitexec</code> &#x2014; <span class="Nd">split
+    standard input into pieces and execute a command for each piece</span></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h1>
+<table class="Nm">
+  <tr>
+    <td><code class="Nm">splitexec</code></td>
+    <td>[<code class="Fl">-k</code>] [<code class="Fl">-a</code>
+      <var class="Ar">suffix_length</var>] [<code class="Fl">-p</code>
+      <var class="Ar">prefix</var>] [<code class="Fl">-s</code>
+      <var class="Ar">byte_count</var>] <var class="Ar">utility</var>
+      [<var class="Ar">argument ...</var>]</td>
+  </tr>
+</table>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h1>
+<p class="Pp">The <code class="Nm">splitexec</code> utility processes standard
+    input, it writes it to temporary files then executes
+    <var class="Ar">utility</var> once per temporary file. Optional arguments
+    may be passed to the <var class="Ar">utility</var>. If the string
+    &#x201C;{}&#x201D; appears anywhere in the utility name or the arguments it
+    is replaced by the pathname of the current file.</p>
+<p class="Pp">The arguments are as follows:</p>
+<dl class="Bl-tag">
+  <dt><a class="permalink" href="#a"><code class="Fl" id="a">-a</code></a>
+    <var class="Ar">suffix_length</var></dt>
+  <dd>Use <var class="Ar">suffix_length</var> letters to form the suffix of the
+      file name. The default suffix length is 3.</dd>
+  <dt><a class="permalink" href="#k"><code class="Fl" id="k">-k</code></a></dt>
+  <dd>Keep pieces after processing them. The default is to remove each piece
+      after <var class="Ar">utility</var> exits.</dd>
+  <dt><a class="permalink" href="#p"><code class="Fl" id="p">-p</code></a>
+    <var class="Ar">prefix</var></dt>
+  <dd>If <var class="Ar">prefix</var> is specified, it is used as a prefix for
+      the names of the files into which the file is split. In this case, each
+      file into which the file is split is named by the prefix followed by a
+      numericaly ordered suffix using <var class="Ar">suffix_length</var>
+      characters in the range &#x201C;0-9&#x201D;. All temporary files are
+      stored in the current directory.</dd>
+  <dt><a class="permalink" href="#s"><code class="Fl" id="s">-s</code></a>
+    <var class="Ar">byte_count</var></dt>
+  <dd>Create files <var class="Ar">byte_count</var> bytes in length. No
+      provision is made for any kind of unit suffix, no &#x2018;k&#x2019;,
+      &#x2018;m&#x2019;, &#x2018;g&#x2019; is supported. The default value is
+      1073741824 (1GB).</dd>
+</dl>
+<p class="Pp">The <var class="Ar">utility</var> argument must be present.</p>
+<p class="Pp">Undefined behaviour may occur if utility reads from the standard
+    input.</p>
+<p class="Pp">The <code class="Nm">splitexec</code> utility exits immediately
+    (without processing any further input) if a command line cannot be
+    assembled, <var class="Ar">utility</var> cannot be invoked, an invocation of
+    utility is terminated by a signal, or an invocation of
+    <var class="Ar">utility</var> exits with a value &gt;0;</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="EXIT_STATUS"><a class="permalink" href="#EXIT_STATUS">EXIT
+  STATUS</a></h1>
+<p class="Pp">The <code class="Nm">splitexec</code> utility exits&#x00A0;0 on
+    success, and&#x00A0;&gt;0 if an error occurs.</p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="EXAMPLES"><a class="permalink" href="#EXAMPLES">EXAMPLES</a></h1>
+<p class="Pp">The <code class="Nm">splitexec</code> utility is specially
+    designed to integrate easily with backup routines, for example when
+    transferring large files to a remote host.</p>
+<p class="Pp">Move a full disk from local host to a remote host using scp:</p>
+<div class="Bd Pp Bd-indent">
+<pre>
+$ cd /tmp
+$ splitexec -p myserverback scp {} user@rhost:mybackupdir/{}&quot;
+</pre>
+</div>
+<p class="Pp">Will generate files myserverback.001, myserverback.002, ... in
+    <var class="Ar">rhost</var>. Using at no time more than
+    <var class="Ar">bytes_count</var> bytes for temporary files.</p>
+<p class="Pp">To recreate the original file from the pieces:</p>
+<p class="Pp"></p>
+<div class="Bd Bd-indent"><code class="Li">$ cat myserverback.* &gt;
+  myserverback</code></div>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h1>
+<p class="Pp"><a class="Xr" href="http://man.openbsd.org/find.1">find(1)</a>,
+    <a class="Xr" href="http://man.openbsd.org/split.1">split(1)</a></p>
+</section>
+<section class="Sh">
+<h1 class="Sh" id="AUTHORS"><a class="permalink" href="#AUTHORS">AUTHORS</a></h1>
+<p class="Pp"><span class="An">Abel Abraham Camarillo Ojeda</span>
+    &lt;<a class="Mt" href="mailto:acamari@verlet.org">acamari@verlet.org</a>&gt;</p>
+</section>
+</div>
+<table class="foot">
+  <tr>
+    <td class="foot-date">March 21, 2020</td>
+    <td class="foot-os">OpenBSD 6.6</td>
+  </tr>
+</table>
+</body>
+</html>
