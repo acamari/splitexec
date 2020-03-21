@@ -1,4 +1,5 @@
 MAN ?= splitexec.1
+MANDOCBIN ?= mandoc
 
 manhtml: ${MAN}
 	for m in $?; do \
@@ -12,7 +13,7 @@ manmarkdown: ${MAN}
 		${MANDOCBIN} -T markdown $$m > $$m.md; \
 	done
 
-README.md: srv.1.md
+README.md: ${MAN}.md
 	cp $? ${?:H}/$@
 
 release: manhtml manmarkdown README.md
