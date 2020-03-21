@@ -119,18 +119,18 @@ Move a full disk from local host to a remote host using scp:
 .Pp
 .Bd -literal -offset Ds
 $ cd /tmp
-$ splitexec -p myserverback scp {} user@rhost:mybackupdir/{}"
+$ splitexec -p myserverback scp {} "user@rhost:mybackupdir/{}" < /dev/sdb
 .Ed
 .Pp
 Will generate files myserverback.001, myserverback.002, ... in
 .Ar rhost .
 Using at no time more than
 .Ar bytes_count
-bytes for temporary files.
+bytes for temporary files and for each piece.
 
 To recreate the original file from the pieces:
 
-.Dl "$ cat myserverback.* > myserverback"
+.Dl "$ cat myserverback.* > /dev/sdb"
 .Sh SEE ALSO
 .Xr find 1 ,
 .Xr split 1

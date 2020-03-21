@@ -101,17 +101,17 @@ for example when transferring large files to a remote host.
 Move a full disk from local host to a remote host using scp:
 
 	$ cd /tmp
-	$ splitexec -p myserverback scp {} user@rhost:mybackupdir/{}"
+	$ splitexec -p myserverback scp {} "user@rhost:mybackupdir/{}" < /dev/sdb
 
 Will generate files myserverback.001, myserverback.002, ... in
 *rhost*.
 Using at no time more than
 *bytes\_count*
-bytes for temporary files.
+bytes for temporary files and for each piece.
 
 To recreate the original file from the pieces:
 
-	$ cat myserverback.* > myserverback
+	$ cat myserverback.* > /dev/sdb
 
 # SEE ALSO
 

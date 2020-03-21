@@ -119,16 +119,17 @@
 <div class="Bd Pp Bd-indent">
 <pre>
 $ cd /tmp
-$ splitexec -p myserverback scp {} user@rhost:mybackupdir/{}&quot;
+$ splitexec -p myserverback scp {} &quot;user@rhost:mybackupdir/{}&quot; &lt; /dev/sdb
 </pre>
 </div>
 <p class="Pp">Will generate files myserverback.001, myserverback.002, ... in
     <var class="Ar">rhost</var>. Using at no time more than
-    <var class="Ar">bytes_count</var> bytes for temporary files.</p>
+    <var class="Ar">bytes_count</var> bytes for temporary files and for each
+    piece.</p>
 <p class="Pp">To recreate the original file from the pieces:</p>
 <p class="Pp"></p>
 <div class="Bd Bd-indent"><code class="Li">$ cat myserverback.* &gt;
-  myserverback</code></div>
+  /dev/sdb</code></div>
 </section>
 <section class="Sh">
 <h1 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
