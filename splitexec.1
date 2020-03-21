@@ -1,0 +1,140 @@
+.\"	$OpenBSD: mdoc.template,v 1.15 2014/03/31 00:09:54 dlg Exp $
+.\"
+.\" Copyright (c) 2020 Abel Camarillo <acamari@verlet.org>
+.\" Copyright (c) 1990, 1991, 1993, 1994
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.Dd $Mdocdate$
+.Dt SPLITEXEC 1
+.Os
+.Sh NAME
+.Nm splitexec
+.Nd split standard input into pieces and execute a command for each piece
+.Sh SYNOPSIS
+.Nm
+.Op Fl k
+.Op Fl a Ar suffix_length
+.Op Fl p Ar prefix
+.Op Fl s Ar byte_count
+.Ar utility Op Ar argument ...
+.Sh DESCRIPTION
+The
+.Nm
+utility processes standard input, it writes it to temporary files then
+executes
+.Ar utility
+once per temporary file.
+Optional arguments may be passed to the
+.Ar utility .
+If the string
+.Dq {}
+appears anywhere in the utility name or the arguments it is replaced
+by the pathname of the current file.
+
+The arguments are as follows:
+.Bl -tag -width Ds
+.It Fl a Ar suffix_length
+Use
+.Ar suffix_length
+letters to form the suffix of the file name. The default suffix length is 3.
+.It Fl k
+Keep pieces after processing them.
+The default is to remove each piece after
+.Ar utility
+exits.
+.It Fl p Ar prefix
+If
+.Ar prefix
+is specified, it is used as a prefix for the names of the files
+into which the file is split. In this case, each file into which the file
+is split is named by the prefix followed by a numericaly ordered suffix
+using
+.Ar suffix_length
+characters in the range
+.Dq 0-9 .
+All temporary files are stored in the current directory.
+.It Fl s Ar byte_count
+Create files
+.Ar byte_count
+bytes in length.
+No provision is made for any kind of unit
+suffix, no
+.Sq k ,
+.Sq m ,
+.Sq g
+is supported.
+The default value is 1073741824 (1GB).
+.El
+
+The
+.Ar utility
+argument must be present.
+
+Undefined behaviour may occur if utility reads from the standard input.
+
+The
+.Nm
+utility exits immediately (without processing any further input) if a command
+line
+cannot be assembled,
+.Ar utility
+cannot be invoked,
+an invocation of utility is terminated by a signal, or
+an invocation of
+.Ar utility
+exits with a value >0;
+.\" .Sh ENVIRONMENT
+.Sh EXIT STATUS
+.Ex -std
+.Sh EXAMPLES
+The
+.Nm
+utility is specially designed to integrate easily with backup routines,
+for example when transferring large files to a remote host.
+
+Move a full disk from local host to a remote host using scp:
+.Pp
+.Bd -literal -offset Ds
+$ cd /tmp
+$ splitexec -p myserverback scp {} user@rhost:mybackupdir/{}"
+.Ed
+.Pp
+Will generate files myserverback.001, myserverback.002, ... in
+.Ar rhost .
+Using at no time more than
+.Ar bytes_count
+bytes for temporary files.
+
+To recreate the original file from the pieces:
+
+.Dl "$ cat myserverback.* > myserverback"
+.Sh SEE ALSO
+.Xr find 1 ,
+.Xr split 1
+.Sh AUTHORS
+.An Abel Abraham Camarillo Ojeda Aq Mt acamari@verlet.org
+.\" .Sh CAVEATS
+.\" .Sh BUGS
