@@ -48,7 +48,8 @@
 <section class="Sh">
 <h1 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h1>
 <p class="Pp"><code class="Nm">splitexec</code> &#x2014; <span class="Nd">split
-    standard input into pieces and execute a command for each piece</span></p>
+    standard input into pieces, stop aftear each piece and execute a utility for
+    it</span></p>
 </section>
 <section class="Sh">
 <h1 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h1>
@@ -66,12 +67,18 @@
 <section class="Sh">
 <h1 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h1>
 <p class="Pp">The <code class="Nm">splitexec</code> utility processes standard
-    input, it writes it to temporary files then executes
-    <var class="Ar">utility</var> once per temporary file. Optional arguments
-    may be passed to the <var class="Ar">utility</var>. If the string
-    &#x201C;{}&#x201D; appears anywhere in the utility name or the arguments it
-    is replaced by the pathname of the current file.</p>
-<p class="Pp">The arguments are as follows:</p>
+    input, it writes it to temporary files, after each temporary file is written
+    it executes <var class="Ar">utility</var> for it, then stops processing
+    input. After <var class="Ar">utility</var> exits for the piece, the piece is
+    deleted (see <code class="Fl">-k</code> option), and
+    <code class="Nm">splitexec</code> resumes processing of input. This can be
+    used to call utilities that expect regular files on huge non-regular files,
+    block devices, pipes, and such.</p>
+<p class="Pp">Optional arguments may be passed to the
+    <var class="Ar">utility</var>. If the string &#x201C;{}&#x201D; appears
+    anywhere in the utility name or the arguments it is replaced by the pathname
+    of the current file.</p>
+<p class="Pp">The options are as follows:</p>
 <dl class="Bl-tag">
   <dt><a class="permalink" href="#a"><code class="Fl" id="a">-a</code></a>
     <var class="Ar">suffix_length</var></dt>
@@ -87,7 +94,10 @@
       file into which the file is split is named by the prefix followed by a
       numericaly ordered suffix using <var class="Ar">suffix_length</var>
       characters in the range &#x201C;0-9&#x201D;. All temporary files are
-      stored in the current directory.</dd>
+      stored in the current directory. If this option is missing a random prefix
+      is used of the form &#x2018;tmp.XXXXXXXXXX&#x2019; where
+      &#x2018;XXXXXXXXXX&#x2019; is a random string of characters consisting of
+      digits and letters [A-Z].</dd>
   <dt><a class="permalink" href="#s"><code class="Fl" id="s">-s</code></a>
     <var class="Ar">byte_count</var></dt>
   <dd>Create files <var class="Ar">byte_count</var> bytes in length. No
@@ -101,7 +111,7 @@
 <p class="Pp">The <code class="Nm">splitexec</code> utility exits immediately
     (without processing any further input) if a command line cannot be
     assembled, <var class="Ar">utility</var> cannot be invoked, an invocation of
-    utility is terminated by a signal, or an invocation of
+    <var class="Ar">utility</var> is terminated by a signal, or an invocation of
     <var class="Ar">utility</var> exits with a value &gt;0;</p>
 </section>
 <section class="Sh">
@@ -114,18 +124,19 @@
 <h1 class="Sh" id="EXAMPLES"><a class="permalink" href="#EXAMPLES">EXAMPLES</a></h1>
 <p class="Pp">The <code class="Nm">splitexec</code> utility is specially
     designed to integrate easily with backup routines, for example when
-    transferring large files to a remote host.</p>
-<p class="Pp">Move a full disk from local host to a remote host using scp:</p>
+    transferring large files to a remote host, using small temporary
+  storage.</p>
+<p class="Pp">Move a full disk compressed from local host to a remote host using
+    scp:</p>
 <div class="Bd Pp Bd-indent">
 <pre>
 $ cd /tmp
-$ splitexec -p myserverback scp {} &quot;user@rhost:mybackupdir/{}&quot; &lt; /dev/sdb
+$ gzip &lt; /dev/sdb | splitexec -p myserv-sdb.gz scp {} &quot;user@rhost:mybackupdir/{}&quot;
 </pre>
 </div>
-<p class="Pp">Will generate files myserverback.001, myserverback.002, ... in
+<p class="Pp">Will generate files myserv-sdb.gz.001, myserv-sdb.gz.002, ... in
     <var class="Ar">rhost</var>. Using at no time more than
-    <var class="Ar">bytes_count</var> bytes for temporary files and for each
-    piece.</p>
+    <var class="Ar">bytes_count</var> bytes for temporary files in total.</p>
 <p class="Pp">To recreate the original file from the pieces:</p>
 <p class="Pp"></p>
 <div class="Bd Bd-indent"><code class="Li">$ cat myserverback.* &gt;
@@ -142,10 +153,15 @@ $ splitexec -p myserverback scp {} &quot;user@rhost:mybackupdir/{}&quot; &lt; /d
 <p class="Pp"><span class="An">Abel Abraham Camarillo Ojeda</span>
     &lt;<a class="Mt" href="mailto:acamari@verlet.org">acamari@verlet.org</a>&gt;</p>
 </section>
+<section class="Sh">
+<h1 class="Sh" id="CAVEATS"><a class="permalink" href="#CAVEATS">CAVEATS</a></h1>
+<p class="Pp">No provision is made for generating a checksum of the full
+  input.</p>
+</section>
 </div>
 <table class="foot">
   <tr>
-    <td class="foot-date">March 21, 2020</td>
+    <td class="foot-date">March 22, 2020</td>
     <td class="foot-os">OpenBSD 6.6</td>
   </tr>
 </table>

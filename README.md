@@ -2,7 +2,8 @@ SPLITEXEC(1) - General Commands Manual
 
 # NAME
 
-**splitexec** - split standard input into pieces and execute a command for each piece
+**splitexec** - split standard input into pieces, stop aftear each piece and execute
+a utility for it
 
 # SYNOPSIS
 
@@ -17,10 +18,21 @@ SPLITEXEC(1) - General Commands Manual
 
 The
 **splitexec**
-utility processes standard input, it writes it to temporary files then
+utility processes standard input, it writes it to temporary files,
+after each temporary file is written it
 executes
 *utility*
-once per temporary file.
+for it, then stops processing input.
+After
+*utility*
+exits for the piece, the piece is deleted (see
+**-k**
+option), and
+**splitexec**
+resumes processing of input.
+This can be used to call utilities that expect regular files on
+huge non-regular files, block devices, pipes, and such.
+
 Optional arguments may be passed to the
 *utility*.
 If the string
@@ -28,7 +40,7 @@ If the string
 appears anywhere in the utility name or the arguments it is replaced
 by the pathname of the current file.
 
-The arguments are as follows:
+The options are as follows:
 
 **-a** *suffix\_length*
 
@@ -54,7 +66,13 @@ The arguments are as follows:
 > *suffix\_length*
 > characters in the range
 > "0-9".
-> All temporary files are stored in the current directory.
+> All temporary files are stored in the current directory. If this option is
+> missing a random prefix is used of the form
+> 'tmp.XXXXXXXXXX'
+> where
+> 'XXXXXXXXXX'
+> is a random string of characters consisting of digits and letters
+> \[A-Z].
 
 **-s** *byte\_count*
 
@@ -82,7 +100,9 @@ line
 cannot be assembled,
 *utility*
 cannot be invoked,
-an invocation of utility is terminated by a signal, or
+an invocation of
+*utility*
+is terminated by a signal, or
 an invocation of
 *utility*
 exits with a value &gt;0;
@@ -96,18 +116,19 @@ The **splitexec** utility exits&#160;0 on success, and&#160;&gt;0 if an error oc
 The
 **splitexec**
 utility is specially designed to integrate easily with backup routines,
-for example when transferring large files to a remote host.
+for example when transferring large files to a remote host, using small
+temporary storage.
 
-Move a full disk from local host to a remote host using scp:
+Move a full disk compressed from local host to a remote host using scp:
 
 	$ cd /tmp
-	$ splitexec -p myserverback scp {} "user@rhost:mybackupdir/{}" < /dev/sdb
+	$ gzip < /dev/sdb | splitexec -p myserv-sdb.gz scp {} "user@rhost:mybackupdir/{}"
 
-Will generate files myserverback.001, myserverback.002, ... in
+Will generate files myserv-sdb.gz.001, myserv-sdb.gz.002, ... in
 *rhost*.
 Using at no time more than
 *bytes\_count*
-bytes for temporary files and for each piece.
+bytes for temporary files in total.
 
 To recreate the original file from the pieces:
 
@@ -122,4 +143,8 @@ split(1)
 
 Abel Abraham Camarillo Ojeda &lt;[acamari@verlet.org](mailto:acamari@verlet.org)&gt;
 
-OpenBSD 6.6 - March 21, 2020
+# CAVEATS
+
+No provision is made for generating a checksum of the full input.
+
+OpenBSD 6.6 - March 22, 2020
