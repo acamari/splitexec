@@ -2,7 +2,7 @@ SPLITEXEC(1) - General Commands Manual
 
 # NAME
 
-**splitexec** - split standard input into pieces, stop aftear each piece and execute
+**splitexec** - split standard input into pieces, stop after each piece and execute
 a utility for it
 
 # SYNOPSIS
