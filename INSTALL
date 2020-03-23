@@ -1,0 +1,7 @@
+#!/bin/sh
+PREFIX=/usr/local
+MANPATH=$PREFIX/man/man1
+
+cp ./splitexec $PREFIX/bin
+mkdir -p $MANPATH
+cp ./splitexec.1 $MANPATH
