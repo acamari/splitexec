@@ -25,4 +25,4 @@ release: manhtml manmarkdown README.md
 
 install:
 	${INSTALL} -o root -m 755 ${PROG} ${PREFIX}/bin/
-	${INSTALL} -o root -m 422 ${MAN} ${PREFIX}/man/man1/
+	${INSTALL} -o root -m 644 ${MAN} ${PREFIX}/man/man1/
