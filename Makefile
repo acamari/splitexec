@@ -1,5 +1,10 @@
+PROG ?= splitexec
 MAN ?= splitexec.1
 MANDOCBIN ?= mandoc
+INSTALL ?= install
+PREFIX ?= /usr/local
+
+all: release
 
 manhtml: ${MAN}
 	for m in $?; do \
@@ -17,3 +22,7 @@ README.md: ${MAN}.md
 	cp $? ${?:H}/$@
 
 release: manhtml manmarkdown README.md
+
+install:
+	${INSTALL} -o root -m 755 ${PROG} ${PREFIX}/bin/
+	${INSTALL} -o root -m 422 ${MAN} ${PREFIX}/man/man1/
