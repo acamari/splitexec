@@ -25,4 +25,4 @@ release: manhtml manmarkdown README.md
 
 install:
 	${INSTALL} -o root -m 755 ${PROG} ${PREFIX}/bin/
-	${INSTALL} -o root -m 644 ${MAN} ${PREFIX}/man/man1/
+	test "x${MAN}" = x || ${INSTALL} -o root -m 644 ${MAN} ${PREFIX}/man/man1/
