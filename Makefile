@@ -3,6 +3,8 @@ MAN ?= splitexec.1
 MANDOCBIN ?= mandoc
 INSTALL ?= install
 PREFIX ?= /usr/local
+BINDIR ?= ${PREFIX}/bin
+MANDIR ?= ${PREFIX}/man/man
 
 all: release
 
@@ -24,5 +26,7 @@ README.md: ${MAN}.md
 release: manhtml manmarkdown README.md
 
 install:
-	${INSTALL} -o root -m 755 ${PROG} ${PREFIX}/bin/
-	test "x${MAN}" = x || ${INSTALL} -o root -m 644 ${MAN} ${PREFIX}/man/man1/
+	${INSTALL} -o root -m 755 ${PROG} ${BINDIR}
+	test "x${MAN}" = x || { \
+	section=`expr "${MAN}" : '.*\.\([^.]*\)$$'` && \
+	${INSTALL} -o root -m 644 ${MAN} ${MANDIR}$${section}; }
