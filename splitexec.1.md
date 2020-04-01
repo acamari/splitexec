@@ -147,4 +147,4 @@ Abel Abraham Camarillo Ojeda &lt;[acamari@verlet.org](mailto:acamari@verlet.org)
 
 No provision is made for generating a checksum of the full input.
 
-OpenBSD 6.6 - March 22, 2020
+OpenBSD 6.6 - March 31, 2020
