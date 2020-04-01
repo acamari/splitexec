@@ -116,6 +116,12 @@ for (my $filecount = 1;; $filecount++) {
 	my $fh;
 	my $lastfile;
 	my @nargv = @ARGV;
+	my $cleanf = sub {
+		return if $kflag;
+		# not already unlinked
+		unlink $fname or err "unlink: $fname" if -e $fname;
+	};
+	$SIG{INT} = $cleanf; # handle ^C
 
 	errx "too many files" if length("$filecount") > $aflag;
 	$fname = sprintf "%s.%0${aflag}d", $pflag, $filecount // errx "bad filename";
@@ -134,7 +140,7 @@ for (my $filecount = 1;; $filecount++) {
 	close $fh or $err = "output error: $fname: $!";
 	(@nargv) = replacecurly($fname, @nargv) or errx "replacecurly";
 	system(@nargv) >> 8 == 0 or $err = "system: @nargv";
-	unlink $fname or err "unlink: $fname" if !$kflag;
+	$cleanf->();
 	err "$err" if $err;
 	last if $lastfile;
 }
