@@ -4,7 +4,7 @@ MANDOCBIN ?= mandoc
 INSTALL ?= install
 PREFIX ?= /usr/local
 BINDIR ?= ${PREFIX}/bin
-MANDIR ?= ${PREFIX}/man/man
+MANDIR ?= ${PREFIX}/man
 
 all: release
 
@@ -28,5 +28,8 @@ release: manhtml manmarkdown README.md
 install:
 	${INSTALL} -o root -m 755 ${PROG} ${BINDIR}
 	test "x${MAN}" = x || { \
-	section=`expr "${MAN}" : '.*\.\([^.]*\)$$'` && \
-	${INSTALL} -o root -m 644 ${MAN} ${MANDIR}$${section}; }
+	section=`expr "${MAN}" : '.*\.\([^.]*\)$$'`; \
+	if [ -d "${MANDIR}" ] && mkdir -p "${MANDIR}/man$${section}"; then \
+		${INSTALL} -o root -m 644 ${MAN} ${MANDIR}/man$${section}/; \
+	fi; \
+	}
